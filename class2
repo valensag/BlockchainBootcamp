@@ -1,0 +1,40 @@
+pragma solidity 0.8.13;
+contract banco {
+
+    uint public balance;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier isOwner() {
+        require(owner == msg.sender);
+        _;
+    }
+
+    function deposit() external payable isOwner{
+        require(owner == msg.sender);
+        balance += msg.value;
+    }
+
+    function withdraw(uint _val) external isOwner{
+        require(_val <= balance);
+        balance -= _val;
+        payable(owner).transfer(_val);
+    }
+}
+
+contract bancolombia{
+    mapping(address => uint) public balances;
+
+    function deposit(address _accountOwner) external payable{
+        balances[_accountOwner] += msg.value;
+    }
+
+    function withdraw(uint _val) external {
+        require(_val <= balances[msg.sender]);
+        balances[msg.sender] -= _val;
+        payable(msg.sender).transfer(_val);
+    }
+}
